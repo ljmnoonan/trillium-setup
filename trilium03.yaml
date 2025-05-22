@@ -1,0 +1,47 @@
+
+services:
+  trilium03:
+    # Optionally, replace `latest` with a version tag like `v0.90.3`
+    # Using `latest` may cause unintended updates to the container
+    image: ghcr.io/triliumnext/trilium:latest
+    container_name: trilium03
+    hostname: ${TRILIUM03_HOSTNAME}
+    ports:
+      - '8080'
+
+    # Restart the container unless it was stopped by the user
+    restart: unless-stopped
+    # environment:
+    #   - TRILIUM_DATA_DIR=/home/node/trilium-data
+
+    networks:
+      default:
+      inverseproxy_shared:
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.trilium03-secure.rule: Host(`${TRILIUM03_HOSTNAME}`)
+      traefik.http.routers.trilium03-secure.entrypoints: web-main
+      traefik.http.routers.trilium03-secure.tls: "true"
+      traefik.http.routers.trilium03-secure.tls.certResolver: letsencrypt
+      traefik.http.routers.trilium03-secure.service: trilium03-svc
+      traefik.http.services.trilium03-svc.loadbalancer.server.port: 8080
+
+    
+    volumes:
+      # This is where Trilium will store its data
+      - trilium03-data:/home/node/trilium-data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+volumes:
+  trilium03-data:
+
+
+networks:
+  default:
+    driver_opts:
+      encrypted: 1
+  inverseproxy_shared:
+    external: true

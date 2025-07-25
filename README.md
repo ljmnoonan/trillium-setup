@@ -1,2 +1,2 @@
-# trillium-setup
-Set up trillium behind Traefik
+# trilium-setup
+Set up trilium behind Traefik

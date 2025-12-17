@@ -4,7 +4,7 @@ version: "2.4"
 
 services:
   proxy:
-    image: traefik:2.4
+    image: traefik:2.11
     container_name: traefik
     networks:
       shared:
@@ -31,6 +31,8 @@ services:
       - "--providers.docker.network=inverseproxy_shared"
       - "--providers.docker=true"
       - "--entrypoints.web-main.address=:443"
+      - "--entrypoints.web-main.http.encodedcharacters.allowencodedslash=true"
+      - "--entrypoints.web-main.http.encodedcharacters.allowencodedhash=true"
       - "--entrypoints.web-main.http.tls.certResolver=letsencrypt"
       - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"

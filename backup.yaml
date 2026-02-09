@@ -1,14 +1,12 @@
 services:
   backup:
-    image: ghcr.io/tecnativa/docker-duplicity:latest
+    image: ghcr.io/tecnativa/docker-duplicity-s3:latest
     init: true
     container_name: backup
     hostname: backup-service
     restart: unless-stopped
     environment:
-      DST: "gdrive://doodba-duplicity@doodba-451021.iam.gserviceaccount.com/trilium/?myDriveFolderID=19a3ufxGpQgz974oh0XJybpllqAnOOdrc"
-      GOOGLE_SERVICE_JSON_FILE: /etc/backup/service-account-key.json
-      PASSPHRASE: ${BACKUP_PASSPHRASE}
+      DST: "boto3+s3://trilium-prod"
       JOB_800_WHAT: |
         dup full $$SRC $$DST
         dup --force remove-older-than 2W $$DST
@@ -18,12 +16,13 @@ services:
       CRONTAB_DAILY: "0 3 * * *"
       CRONTAB_WEEKLY: "30 0 * * 2"
       TZ: America/Detroit
+    env_file:
+      - secrets/backup.env
     volumes:
       - backup_cache:/root:z
       - trilium01-data:/mnt/backup/src/trilium01-data:z
       - trilium02-data:/mnt/backup/src/trilium02-data:z
       - trilium03-data:/mnt/backup/src/trilium03-data:z
-      - ./secrets/service-account-key.json:/etc/backup/service-account-key.json
 
 volumes:
   backup_cache:

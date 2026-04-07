@@ -16,6 +16,11 @@ services:
       CRONTAB_DAILY: "0 3 * * *"
       CRONTAB_WEEKLY: "30 0 * * 2"
       TZ: America/Detroit
+      SMTP_TLS: 1
+      SMTP_REPORT_SUCCESS: 1
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 465
+      SMTP_SECURITY: force_tls
     env_file:
       - secrets/backup.env
     volumes:
